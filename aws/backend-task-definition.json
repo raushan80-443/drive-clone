@@ -6,10 +6,11 @@
   ],
   "cpu": "256",
   "memory": "512",
+  "executionRoleArn": "arn:aws:iam::485442668780:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "drive-clone-backend",
-      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/drive-clone-backend:latest",
+      "image": "485442668780.dkr.ecr.us-east-1.amazonaws.com/drive-clone-backend:latest",
       "portMappings": [
         {
           "containerPort": 5000,
