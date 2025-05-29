@@ -40,24 +40,22 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build and push frontend image
-      uses: aws-actions/amazon-ecr-build-and-push-image@v1
-      with:
-        path: ./drive-clone-frontend
-        repository: ${{ env.ECR_REPOSITORY_FRONTEND }}
-        tag: ${{ github.sha }},latest
-        build-args: |
-          NODE_ENV=production
-        cache: true
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest ./drive-clone-frontend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
 
     - name: Build and push backend image
-      uses: aws-actions/amazon-ecr-build-and-push-image@v1
-      with:
-        path: ./drive-clone-backend
-        repository: ${{ env.ECR_REPOSITORY_BACKEND }}
-        tag: ${{ github.sha }},latest
-        build-args: |
-          NODE_ENV=production
-        cache: true
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest ./drive-clone-backend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest
 
     - name: Update frontend task definition
       id: task-def-frontend
