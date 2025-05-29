@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "drive-clone-frontend",
-      "image": "<ECR_REPOSITORY_URI>:latest",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/drive-clone-frontend:latest",
       "portMappings": [
         {
           "containerPort": 80,

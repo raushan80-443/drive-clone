@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "drive-clone-backend",
-      "image": "<ECR_REPOSITORY_URI>:latest",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/drive-clone-backend:latest",
       "portMappings": [
         {
           "containerPort": 5000,
@@ -20,11 +20,11 @@
       "environment": [
         {
           "name": "MONGODB_URI",
-          "value": "mongodb://mongodb:27017/drive-clone"
+          "value": "${MONGODB_URI}"
         },
         {
           "name": "JWT_SECRET",
-          "value": "your-jwt-secret"
+          "value": "${JWT_SECRET}"
         }
       ],
       "logConfiguration": {
