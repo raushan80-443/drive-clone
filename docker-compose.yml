@@ -13,10 +13,7 @@ services:
       - NODE_ENV=production
       - JWT_SECRET=your-secret-key-here
       - CORS_ORIGIN=http://localhost:80
-      - MONGODB_URI=mongodb://mongo:27017/drive-clone
-    depends_on:
-      mongo:
-        condition: service_healthy
+      - MONGODB_URI=mongodb+srv://myAtlasDBUser:6Eziu6ClNR145yFk@cluster0.mongodb.net/drive-clone?retryWrites=true&w=majority
     networks:
       - app-network
     restart: unless-stopped
@@ -44,21 +41,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
 
 networks:
   app-network:
