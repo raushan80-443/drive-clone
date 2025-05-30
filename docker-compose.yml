@@ -45,8 +45,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  mongodb_data:
-    name: drive_clone_mongodb_data
-    driver: local
