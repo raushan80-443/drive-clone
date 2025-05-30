@@ -71,9 +71,7 @@ jobs:
         container-name: ${{ env.CONTAINER_NAME_FRONTEND }}
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
         environment-variables: |
-          [
-            {"name": "REACT_APP_API_URL", "value": "http://${{ secrets.ALB_DNS_NAME }}/api"}
-          ]
+          REACT_APP_API_URL=http://${{ secrets.ALB_DNS_NAME }}/api
 
     - name: Update backend task definition
       id: task-def-backend
@@ -83,10 +81,8 @@ jobs:
         container-name: ${{ env.CONTAINER_NAME_BACKEND }}
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
         environment-variables: |
-          [
-            {"name": "MONGODB_URI", "value": "${{ secrets.MONGODB_URI }}"},
-            {"name": "JWT_SECRET", "value": "${{ secrets.JWT_SECRET }}"}
-          ]
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
 
     - name: Deploy frontend to Amazon ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
