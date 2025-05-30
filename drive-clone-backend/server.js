@@ -13,7 +13,7 @@ const PORT = 5000;
 const SECRET = process.env.JWT_SECRET || 'jwt-secret';
 
 // Connect to MongoDB
-mongoose.connect('mongodb://mongo:27017/drive-clone', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo:27017/drive-clone', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(async () => {

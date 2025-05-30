@@ -11,17 +11,12 @@ services:
       - ./drive-clone-backend/uploads:/app/uploads:delegated
     environment:
       - NODE_ENV=production
-      - JWT_SECRET=your-secret-key-here
+      - JWT_SECRET=your-secret-key
       - CORS_ORIGIN=http://localhost:80
-      - MONGODB_URI=mongodb+srv://myAtlasDBUser:6Eziu6ClNR145yFk@cluster0.mongodb.net/drive-clone?retryWrites=true&w=majority
+      - MONGODB_URI=mongodb+srv://myAtlasDBUser:6Eziu6ClNR145yFk@cluster0.s3goh4j.mongodb.net/drive-clone?retryWrites=true&w=majority
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   frontend:
     build:
@@ -36,11 +31,6 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
 networks:
   app-network:
