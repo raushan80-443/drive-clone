@@ -21,11 +21,11 @@
       "environment": [
         {
           "name": "MONGODB_URI",
-          "value": "${MONGODB_URI}"
+          "value": "mongodb+srv://myAtlasDBUser:6Eziu6ClNR145yFk@cluster0.mongodb.net/drive-clone?retryWrites=true&w=majority"
         },
         {
           "name": "JWT_SECRET",
-          "value": "${JWT_SECRET}"
+          "value": "your-secret-key"
         }
       ],
       "logConfiguration": {

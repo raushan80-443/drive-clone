@@ -44,7 +44,10 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest ./drive-clone-frontend
+        docker build --cache-from $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest \
+          ./drive-clone-frontend
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
 
@@ -53,7 +56,10 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest ./drive-clone-backend
+        docker build --cache-from $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest \
+          ./drive-clone-backend
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:latest
 
@@ -64,6 +70,10 @@ jobs:
         task-definition: aws/frontend-task-definition.json
         container-name: ${{ env.CONTAINER_NAME_FRONTEND }}
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
+        environment-variables: |
+          [
+            {"name": "REACT_APP_API_URL", "value": "http://${{ secrets.ALB_DNS_NAME }}/api"}
+          ]
 
     - name: Update backend task definition
       id: task-def-backend
@@ -72,6 +82,11 @@ jobs:
         task-definition: aws/backend-task-definition.json
         container-name: ${{ env.CONTAINER_NAME_BACKEND }}
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
+        environment-variables: |
+          [
+            {"name": "MONGODB_URI", "value": "${{ secrets.MONGODB_URI }}"},
+            {"name": "JWT_SECRET", "value": "${{ secrets.JWT_SECRET }}"}
+          ]
 
     - name: Deploy frontend to Amazon ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -80,6 +95,7 @@ jobs:
         service: ${{ env.ECS_SERVICE_FRONTEND }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
+        wait-for-minutes: 5
 
     - name: Deploy backend to Amazon ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -87,4 +103,5 @@ jobs:
         task-definition: ${{ steps.task-def-backend.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE_BACKEND }}
         cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true 
+        wait-for-service-stability: true
+        wait-for-minutes: 5 
